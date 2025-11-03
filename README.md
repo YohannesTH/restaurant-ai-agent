@@ -69,7 +69,7 @@ This project demonstrates how **AI + automation tools** can streamline restauran
 
 ## 🖼️ Workflow Diagram
 
-![Workflow Diagram](./workflow.png)
+![Workflow Diagram](./images/restaurant-ai-agent.png)
 
 > Example: Visual overview of the n8n setup showing Telegram input, audio transcription, AI processing, and connected Google tools.
 
@@ -102,3 +102,5 @@ Configure the following credentials in **n8n**:
 ### 4️⃣ Start Workflow
 
 Deploy the workflow — your **Telegram bot** is now live and ready to handle messages.
+
+
