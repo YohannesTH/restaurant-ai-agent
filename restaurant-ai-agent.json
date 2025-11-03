@@ -1,0 +1,567 @@
+{
+  "name": "restaurant-ai-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "794c43a9-6a97-4785-866a-7aac438541ef",
+      "name": "Telegram Trigger",
+      "webhookId": "c6831060-5e4d-402f-a77b-ee7a6938863a",
+      "credentials": {
+        "telegramApi": {
+          "id": "MCZTIRhFdszSOnri",
+          "name": "restaurant-ai-agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.content.parts[0].text }} {{ $json.message.text }} {{ $json.text }}",
+        "options": {
+          "systemMessage": "You are a restaurant agent, you can handle following task:\n\nSend out our menu, the menu content are in \"Menu Tool\"\n\nCheck availability with \"Google Calendar Get\" tool\n\nMake reservation with \"Calendar Create\" tool, you will need a time and name, remember to check the availability before creating the event, each timeslot only support 1 reservation.\n\nPlace take away order, you can put the record on \"food order sheet\"\n\nYou can retrieve memory from conversation history.\n\nMore information:\nToday is {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        16
+      ],
+      "id": "0fe9594a-437c-4981-a174-6ed5069450f8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        224
+      ],
+      "id": "f2f7b6fd-64c4-4b61-ac9d-f63db7977480",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "0JsafqptLYSYOzGB",
+          "name": "restaurant-ai-agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        -144
+      ],
+      "id": "3eed941e-194d-46d0-89fd-09412a1f6545",
+      "name": "Download audio",
+      "webhookId": "103a6e32-fb72-46e6-aef2-6b18cdc22719",
+      "credentials": {
+        "telegramApi": {
+          "id": "MCZTIRhFdszSOnri",
+          "name": "restaurant-ai-agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        928,
+        -144
+      ],
+      "id": "d25f1443-dfa0-4716-aa5c-5c347b5bb87b",
+      "name": "Download Audio",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "0JsafqptLYSYOzGB",
+          "name": "restaurant-ai-agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This is the \"food order sheet\". ",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1UIKq2iY6C6VrNa7zzA5Acl7UyM3gygwpHJzeQm-E7XY",
+          "mode": "list",
+          "cachedResultName": "food order sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UIKq2iY6C6VrNa7zzA5Acl7UyM3gygwpHJzeQm-E7XY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UIKq2iY6C6VrNa7zzA5Acl7UyM3gygwpHJzeQm-E7XY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $fromAi(\"name\") }}",
+            "contact": "{{ $fromAi(\"contact\") }}",
+            "delivery_address": "{{ $fromAi(\"delivery_address\") }}",
+            "food": "{{ $fromAi(\"food\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact",
+              "displayName": "contact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "delivery_address",
+              "displayName": "delivery_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "food",
+              "displayName": "food",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1888,
+        208
+      ],
+      "id": "1c88a524-6f1a-4fbd-81ce-e8f435b639f2",
+      "name": "food order sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pScysDvpQgQ9tugy",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This is the \"Menu Tool\". You can get the restaurant menu from the doc url. ",
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1eb55cxBeG1bAb3SuIZOltnSY_CFbFH02Jd8u0CiLi0w/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        208
+      ],
+      "id": "454ecb8f-fe50-4566-a7ca-10f0d1d4635d",
+      "name": "Menu Tool",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "aFv7qTHt9W2O2o54",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This is \"Calendar Get\" tool for you to check if there is any event in certain timeslot, pass \"start_time\" to search for after and \"end_time\" to search for before. ",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "1e2a7e22f911675a1bc3ea3d50cbaf8758e02088325abd7f97509c645a1f08c4@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Restaurant"
+        },
+        "timeMin": "={{ $fromAi(\"start_time\") }}",
+        "timeMax": "={{ $fromAi(\"end_time\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1584,
+        208
+      ],
+      "id": "f3f9b157-a611-4589-87d5-40f5160ea6f6",
+      "name": "Calendar Get",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "VVYsu64Wm8Tudszn",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This is our \"Calendar Create\" tool. You need to pass \"start_time\", \"end_time\" for booking, also pass name for the timeslot.",
+        "calendar": {
+          "__rl": true,
+          "value": "1e2a7e22f911675a1bc3ea3d50cbaf8758e02088325abd7f97509c645a1f08c4@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Restaurant"
+        },
+        "start": "={{ $fromAi(\"start_time\") }}",
+        "end": "={{ $fromAi(\"end_time\") }}",
+        "additionalFields": {
+          "summary": "={{ $fromAi(\"name\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1728,
+        208
+      ],
+      "id": "a5c87617-b8dc-4556-a485-95025b553bb0",
+      "name": "Calendar Create",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "VVYsu64Wm8Tudszn",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }} ",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1584,
+        16
+      ],
+      "id": "0e227047-5f94-48ba-b06d-b8176c0ebc4d",
+      "name": "Telegram",
+      "webhookId": "b0851784-383e-4b0c-b065-da6995173b5f",
+      "credentials": {
+        "telegramApi": {
+          "id": "MCZTIRhFdszSOnri",
+          "name": "restaurant-ai-agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "c5ac62c5-1318-464b-98d2-60032900c85f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "95356a6f-9caf-4b8d-9507-60d6f4ce49c5",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "500b25ee-9a42-48d8-aee4-a1265a6c0f0b",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').first().json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        224
+      ],
+      "id": "3056ddff-35cd-457e-8bf2-0274ec2d7dae",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "97c5e613-721e-47ed-bff9-613c53e16872",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "da19ab73-1a4f-42b5-8e73-0dc37963cb8d",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        736,
+        128
+      ],
+      "id": "a5dad69a-a5aa-4aba-bc2d-c1431f60f65e",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download audio": {
+      "main": [
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "food order sheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Menu Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Get": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Create": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Download audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e2c68720-8e53-4010-beb8-121b944b7bbb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "14862c16d1a89cce61fa55d1de50d39ad1218193e1a4a61bf0cb3eb8d3465601"
+  },
+  "id": "JTz2omlDv3G9lVSV",
+  "tags": []
+}
