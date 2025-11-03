@@ -82,22 +82,31 @@ This project demonstrates how **AI + automation tools** can streamline restauran
 git clone https://github.com/<your-username>/restaurant-ai-agent-n8n.git
 cd restaurant-ai-agent-n8n
 
-### 2️⃣ Import Workflow to n8n
+2️⃣ Import Workflow to n8n
 
-- Go to your **n8n dashboard**.  
-- Import the provided `.json` workflow file (included in this repository).
+Go to your n8n dashboard.
 
----
+Import the provided .json workflow file (included in this repository).
 
-### 3️⃣ Set Up Credentials
+3️⃣ Set Up Credentials
 
-Configure the following credentials in **n8n**:
+Configure the following credentials in n8n:
 
-- **Telegram Bot Token**  
-- **Google Sheets & Calendar** credentials  
-- **Gemini API access**
+Telegram Bot Token
 
----
+Google Sheets & Calendar credentials
+
+Gemini API access
+
+Tip: Use n8n's Credential Manager to securely store API keys and OAuth tokens.
+
+4️⃣ Start Workflow
+
+Enable the imported workflow in your n8n instance.
+
+Test by sending a message or voice note to your Telegram bot.
+
+Check Google Sheets and Calendar for logged orders and created events.
 
 ### 4️⃣ Start Workflow
 
