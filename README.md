@@ -69,7 +69,7 @@ This project demonstrates how **AI + automation tools** can streamline restauran
 
 ## 🖼️ Workflow Diagram
 
-![Workflow Diagram](./images/restaurant-ai-agent.png)
+![Workflow Diagram](./images/restaurant-ai-agent.jpg)
 
 > Example: Visual overview of the n8n setup showing Telegram input, audio transcription, AI processing, and connected Google tools.
 
